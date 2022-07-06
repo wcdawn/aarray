@@ -1,6 +1,7 @@
 program main_struct
 
 type dat
+  sequence
   integer(4) :: i
   real(8) :: x
 endtype dat
@@ -19,7 +20,7 @@ do i = 1,imax
 enddo
 
 do i = 1,imax
-  write(*,'(i0, x, f10.2)') a(i)%i, a(i)%x
+  write(*,'(i0, 1x, f10.2)') a(i)%i, a(i)%x
 enddo
 
 deallocate(a)
