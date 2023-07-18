@@ -1,11 +1,14 @@
 PROGRAM main
+use iso_c_binding
 IMPLICIT NONE
 
-  REAL, ALLOCATABLE, DIMENSION (:) :: a
+  REAL, ALLOCATABLE, TARGET, DIMENSION (:) :: a
+  INTEGER, POINTER, DIMENSION (:) :: a_
   INTEGER, PARAMETER :: maxlen=10
 
   ! start
   WRITE(0,*) 'start main'
+
 
   ALLOCATE (a(maxlen))
   CALL a_write_real(a)
@@ -13,8 +16,10 @@ IMPLICIT NONE
   DEALLOCATE (a)
 
   ALLOCATE (a(maxlen))
-  CALL a_write_int(a)
-  CALL a_print_int(a)
+  call c_f_pointer ( c_loc(a), a_, (/maxlen/))
+
+  CALL a_write_int(a_)
+  CALL a_print_int(a_)
   DEALLOCATE (a)
 
   WRITE(0,*) 'end main'
@@ -42,11 +47,9 @@ IMPLICIT NONE
       RETURN
     ENDSUBROUTINE
 
-    SUBROUTINE a_write_int (a_in)
+    SUBROUTINE a_write_int (a)
       IMPLICIT NONE
-      REAL, INTENT(out) :: a_in(maxlen)
-      INTEGER :: a(maxlen)
-      EQUIVALENCE (a_in,a)
+      INTEGER, INTENT(out) :: a(maxlen)
       INTEGER :: i
       DO i = 1,maxlen
         a(i)=i
