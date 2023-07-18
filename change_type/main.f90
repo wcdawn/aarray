@@ -2,25 +2,31 @@ PROGRAM main
 use iso_c_binding
 IMPLICIT NONE
 
-  REAL, ALLOCATABLE, TARGET, DIMENSION (:) :: a
-  INTEGER, POINTER, DIMENSION (:) :: a_
+  REAL, ALLOCATABLE, TARGET, DIMENSION (:) :: base
+  REAL, POINTER, dimension (:) :: a
+  INTEGER, POINTER, DIMENSION (:) :: a__
   INTEGER, PARAMETER :: maxlen=10
 
   ! start
   WRITE(0,*) 'start main'
 
-
-  ALLOCATE (a(maxlen))
+  allocate (base(maxlen))
+  call c_f_pointer(c_loc(base), a, (/maxlen/))
+  call c_f_pointer(c_loc(base), a__, (/maxlen/))
   CALL a_write_real(a)
   CALL a_print_real(a)
-  DEALLOCATE (a)
+  DEALLOCATE (base)
+  nullify (a)
+  nullify (a__)
 
-  ALLOCATE (a(maxlen))
-  call c_f_pointer ( c_loc(a), a_, (/maxlen/))
-
-  CALL a_write_int(a_)
-  CALL a_print_int(a_)
-  DEALLOCATE (a)
+  ALLOCATE (base(maxlen))
+  call c_f_pointer(c_loc(base), a, (/maxlen/))
+  call c_f_pointer(c_loc(base), a__, (/maxlen/))
+  CALL a_write_int(a__)
+  CALL a_print_int(a__)
+  DEALLOCATE (base)
+  nullify (a)
+  nullify (a__)
 
   WRITE(0,*) 'end main'
   ! end
