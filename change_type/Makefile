@@ -3,7 +3,7 @@
 
 FC=gfortran
 
-FFLAGS=-O0 -g
+FFLAGS=-O0 -g -Wall -Wextra -Werror -std=f2008
 
 default : exec run
 

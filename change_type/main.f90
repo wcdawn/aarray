@@ -7,8 +7,13 @@ IMPLICIT NONE
   INTEGER, POINTER, DIMENSION (:) :: a__
   INTEGER, PARAMETER :: maxlen=10
 
+  INTEGER, PARAMETER :: ione=1 ! default integer
+  REAL, PARAMETER :: rone=1.0  ! default real
+
   ! start
   WRITE(0,*) 'start main'
+
+  IF (storage_size(ione) /= storage_size(rone)) STOP 'inconsistent REAL and INTEGER'
 
   allocate (base(maxlen))
   call c_f_pointer(c_loc(base), a, (/maxlen/))
