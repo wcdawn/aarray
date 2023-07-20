@@ -2,9 +2,7 @@ PROGRAM main
 use iso_c_binding
 IMPLICIT NONE
 
-  REAL, ALLOCATABLE, TARGET, DIMENSION (:) :: base
-  REAL, POINTER, dimension (:) :: a
-  INTEGER, POINTER, DIMENSION (:) :: a__
+  REAL, ALLOCATABLE, TARGET, DIMENSION (:) :: a
   INTEGER, PARAMETER :: maxlen=10
 
   INTEGER, PARAMETER :: ione=1 ! default integer
@@ -15,64 +13,64 @@ IMPLICIT NONE
 
   IF (storage_size(ione) /= storage_size(rone)) STOP 'inconsistent REAL and INTEGER'
 
-  allocate (base(maxlen))
-  call c_f_pointer(c_loc(base), a, (/maxlen/))
-  call c_f_pointer(c_loc(base), a__, (/maxlen/))
-  CALL a_write_real(a)
-  CALL a_print_real(a)
-  DEALLOCATE (base)
-  nullify (a)
-  nullify (a__)
+  allocate (a(maxlen))
+  CALL a_write_real(maxlen, a)
+  CALL a_print_real(maxlen, a)
+  DEALLOCATE (a)
 
-  ALLOCATE (base(maxlen))
-  call c_f_pointer(c_loc(base), a, (/maxlen/))
-  call c_f_pointer(c_loc(base), a__, (/maxlen/))
-  CALL a_write_int(a__)
-  CALL a_print_int(a__)
-  DEALLOCATE (base)
-  nullify (a)
-  nullify (a__)
+  ALLOCATE (a(maxlen))
+  CALL a_write_int(maxlen, c_loc(a))
+  CALL a_print_int(maxlen-1, c_loc(a(2)))
+  DEALLOCATE (a)
 
   WRITE(0,*) 'end main'
   ! end
 
   CONTAINS
 
-    SUBROUTINE a_write_real (a)
+    SUBROUTINE a_write_real (length, a)
       IMPLICIT NONE
-      REAL, INTENT(out) :: a(maxlen)
+      integer, intent(in) :: length
+      REAL, INTENT(out) :: a(length)
       INTEGER :: i
-      DO i = 1,maxlen
+      DO i = 1,length
         a(i)=i*1.0
       ENDDO
       RETURN
     ENDSUBROUTINE 
 
-    SUBROUTINE a_print_real (a)
+    SUBROUTINE a_print_real (length, a)
       IMPLICIT NONE
-      REAL, INTENT(in) :: a(maxlen)
+      integer, intent(in) :: length
+      REAL, INTENT(in) :: a(length)
       INTEGER :: i
-      DO i = 1,maxlen
+      DO i = 1,length
         WRITE(0,*) a(i)
       ENDDO
       RETURN
     ENDSUBROUTINE
 
-    SUBROUTINE a_write_int (a)
+    SUBROUTINE a_write_int (length, a_ptr)
       IMPLICIT NONE
-      INTEGER, INTENT(out) :: a(maxlen)
+      integer, intent(in) :: length
+      type(c_ptr), intent(in) :: a_ptr
+      integer, pointer :: a(:)
       INTEGER :: i
-      DO i = 1,maxlen
+      call c_f_pointer(a_ptr, a, (/length/))
+      DO i = 1,length
         a(i)=i
       ENDDO
       RETURN
     ENDSUBROUTINE 
 
-    SUBROUTINE a_print_int (a)
+    SUBROUTINE a_print_int (length, a_ptr)
       IMPLICIT NONE
-      INTEGER, INTENT(in) :: a(maxlen)
+      integer, intent(in) :: length
+      type(c_ptr), intent(in) :: a_ptr
+      integer, pointer :: a(:)
       INTEGER :: i
-      DO i = 1,maxlen
+      call c_f_pointer(a_ptr, a, (/length/))
+      DO i = 1,length
         WRITE(0,*) a(i)
       ENDDO
       RETURN
