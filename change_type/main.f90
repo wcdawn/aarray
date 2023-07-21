@@ -50,6 +50,11 @@ IMPLICIT NONE
       RETURN
     ENDSUBROUTINE
 
+    ! NOTE: this is an attempt to circumvent void* pointers.
+    ! This is dangerous for several reasons:
+    !   (a) The underlying types do not agree (not really type-correct).
+    !   (b) The memory is modified, but the pointer is marked intent(in). This
+    !       is the same behavior as a "void* const" rather than a "const void* const".
     SUBROUTINE a_write_int (length, a_ptr)
       IMPLICIT NONE
       integer, intent(in) :: length
